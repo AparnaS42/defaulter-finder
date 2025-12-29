@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPIT | Attendance Defaulter Management System</title>
+
+  <!-- ✅ Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- ✅ SheetJS Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <!-- ✅ jsPDF Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <!-- ✅ html2canvas Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaLb1Tshb9rxq0fMvPPRzYl0zPUFeVvH+ULNjq8vuLCFMozrRUeGy+qNrxFNHZxbsbTYubqjfw0Wpb4QPkVjA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <!-- ✅ Custom JavaScript -->
+  <script defer src="script.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f6f8;
+    }
+
+    #result table tr {
+      transition: all 0.3s ease-in-out;
+    }
+
+    ::-webkit-scrollbar {
+      height: 8px;
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    /* SPIT Header */
+    .spit-header {
+      background-color: #0B3C5D;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    /* Result Cards */
+    .spit-card {
+      background: white;
+      border: 1px solid #dcdcdc;
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    }
+
+    /* Tables */
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    thead {
+      background-color: #1F7A8C;
+      color: white;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    tbody tr:hover {
+      background-color: #f1f7fa;
+    }
+
+    /* Buttons */
+    .btn-spit {
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .btn-excel {
+      background-color: #2E7D32;
+      color: white;
+    }
+
+    .btn-pdf {
+      background-color: #C62828;
+      color: white;
+    }
+
+    /* Footer */
+    .spit-footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 16px;
+      font-size: 13px;
+      color: #555;
+      border-top: 1px solid #e5e7eb;
+    }
+  </style>
+
+
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+  <!-- ✅ Navigation Bar -->
+  <nav class="bg-blue-900 shadow fixed w-full z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center relative">
+      <img src="image.png" alt="Logo" class="h-10">
+      
+      <!-- Mobile Hamburger -->
+      <div class="md:hidden cursor-pointer hamburger" onclick="toggleMenu()">
+        <span class="block w-6 h-0.5 bg-black mb-1"></span>
+        <span class="block w-6 h-0.5 bg-black mb-1"></span>
+        <span class="block w-6 h-0.5 bg-black"></span>
+      </div>
+
+      <!-- Desktop Nav -->
+      <ul class="nav-links hidden md:flex space-x-6 font-medium">
+        <li><a href="#home" class="hover:text-white transition text-white">Home</a></li>
+        <li><a href="#about" class="hover:text-white transition text-white">About</a></li>
+      </ul>
+    </div>
+
+    <!-- Mobile Nav Links -->
+    <ul id="mobileMenu" class="md:hidden hidden flex-col items-start px-6 pb-4 space-y-2 font-medium bg-white shadow">
+      <li><a href="#home" class="hover:text-blue-500 transition">Home</a></li>
+      <li><a href="#about" class="hover:text-blue-500 transition">About</a></li>
+    </ul>
+  </nav>
+
+ <!-- ✅ Header Section -->
+<header id="home" class="pt-24 bg-gradient-to-br from-blue-100 to-blue-200 min-h-[90vh] flex items-center justify-center">
+  <div class="max-w-7xl w-full flex flex-col md:flex-row items-center md:items-center gap-10 px-6">
+    <!-- Left Content -->
+    <div class="space-y-6 md:w-1/2 text-center md:text-left">
+      <h1 class="text-4xl font-bold text-blue-900"> SPIT Attendance Defaulter Management System </h1>
+
+      <p class="text-lg text-gray-700">
+        An intelligent tool designed to streamline attendance analysis and effortlessly identify defaulter students.
+        Upload attendance data, set custom criteria, and generate detailed reports in seconds.
+      </p>
+      <button id="getStartedBtn"
+        class="bg-blue-900 text-white px-6 py-3 rounded-full hover:bg-blue-700 transition duration-300 shadow">
+        Get Started
+      </button>
+    </div>
+
+    <!-- Right Content - Theoretical Highlights -->
+    <div class="md:w-1/2 space-y-6">
+      <div class="flex items-start gap-4">
+        <div class="text-blue-600 text-3xl">📊</div>
+        <div>
+          <h3 class="text-xl font-semibold text-blue-800">Automated Analysis</h3>
+          <p class="text-gray-600 text-sm">No more manual counting. Just upload your file and let the system calculate attendance gaps.</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-4">
+        <div class="text-green-600 text-3xl">⚙️</div>
+        <div>
+          <h3 class="text-xl font-semibold text-green-800">Custom Criteria</h3>
+          <p class="text-gray-600 text-sm">Set your own attendance percentage threshold to define who counts as a defaulter.</p>
+        </div>
+      </div>
+      <div class="flex items-start gap-4">
+        <div class="text-red-600 text-3xl">📁</div>
+        <div>
+          <h3 class="text-xl font-semibold text-red-800">Detailed Reports</h3>
+          <p class="text-gray-600 text-sm">Export beautifully formatted PDF reports for presentations or official use.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+
+  <!-- ✅ Main Section -->
+  <div class="max-w-7xl mx-auto px-4 py-16 space-y-16">
+    <!-- About Section -->
+    <section id="about" class="bg-white p-6 rounded-2xl shadow-lg">
+      <h2 class="text-2xl font-semibold text-center text-blue-800 mb-6">Unlocking Potential, One Step at a Time</h2>
+      <ul class="space-y-4 list-disc list-inside text-gray-700 text-lg">
+        <li><strong>Empower Education with Precision.</strong></li>
+        <li><strong>Every day counts—make attendance matter.</strong></li>
+        <li><strong>Transforming data into actionable insights.</strong></li>
+        <li><strong>Your journey to smarter academia starts here.</strong></li>
+      </ul>
+    </section>
+
+    <!-- Defaulter Finder Section -->
+    <section id="defaulter-finder" class="bg-white p-8 rounded-2xl shadow-lg">
+      <h1 class="text-3xl font-bold text-center text-blue-900 mb-8">Defaulter Student Finder</h1>
+
+      <div class="space-y-6">
+        <!-- Upload Inputs -->
+        <div>
+          <label for="file1" class="block font-medium text-gray-700">Upload Attendance File 1:</label>
+          <input type="file" id="file1" accept=".xlsx, .xls"
+            class="w-full mt-1 border p-2 rounded-lg file:mr-4 file:py-2 file:px-4 file:border-0 file:bg-blue-900 file:text-white file:rounded-full hover:file:bg-blue-700 transition" />
+        </div>
+
+        <div>
+          <label for="file2" class="block font-medium text-gray-700">Upload Attendance File 2:</label>
+          <input type="file" id="file2" accept=".xlsx, .xls"
+            class="w-full mt-1 border p-2 rounded-lg file:mr-4 file:py-2 file:px-4 file:border-0 file:bg-blue-900 file:text-white file:rounded-full hover:file:bg-blue-700 transition" />
+        </div>
+
+        <div>
+          <label for="file3" class="block font-medium text-gray-700">Upload Attendance File 3:</label>
+          <input type="file" id="file3" accept=".xlsx, .xls"
+            class="w-full mt-1 border p-2 rounded-lg file:mr-4 file:py-2 file:px-4 file:border-0 file:bg-blue-900 file:text-white file:rounded-full hover:file:bg-blue-700 transition" />
+        </div>
+
+        <div>
+          <label for="file4" class="block font-medium text-gray-700">Upload Attendance File 4:</label>
+          <input type="file" id="file4" accept=".xlsx, .xls"
+            class="w-full mt-1 border p-2 rounded-lg file:mr-4 file:py-2 file:px-4 file:border-0 file:bg-blue-900 file:text-white file:rounded-full hover:file:bg-blue-700 transition" />
+        </div>
+
+        <!-- Threshold -->
+        <div>
+          <label for="threshold" class="block font-medium text-gray-700">Set Attendance Threshold (%):</label>
+          <input type="number" id="threshold" min="1" max="100" value="75"
+            class="w-full mt-1 border p-2 rounded-lg focus:ring-2 focus:ring-blue-500" />
+        </div>
+
+        <!-- Result Tables -->
+        <div id="result" class="mt-10 grid md:grid-cols-3 gap-6">
+          <!-- Tables from JS -->
+        </div>
+
+        <!-- Action Button -->
+        <div class="mt-6 flex flex-col md:flex-row items-center justify-center gap-4">
+          <button id="generateList"
+            class="bg-green-600 text-white px-6 py-3 rounded-full hover:bg-green-700 transition duration-300 shadow">
+            Create Defaulter List
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+
+  <script>
+    // Smooth Scroll to Defaulter Finder Section
+    document.getElementById("getStartedBtn").addEventListener("click", function () {
+      document.getElementById("defaulter-finder").scrollIntoView({ behavior: "smooth" });
+    });
+
+    const hamburger = document.querySelector('.hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+
+  function toggleMenu() {
+    mobileMenu.classList.toggle('hidden');
+  }
+
+  // Close menu if clicked outside
+  document.addEventListener('click', function (event) {
+    const isClickInsideMenu = mobileMenu.contains(event.target);
+    const isClickOnHamburger = hamburger.contains(event.target);
+
+    if (!isClickInsideMenu && !isClickOnHamburger) {
+      mobileMenu.classList.add('hidden');
+    }
+  });
+  </script>
+
+  <div class="spit-footer">
+  © 2025 Sardar Patel Institute of Technology | Academic Utilities Portal
+  </div>
+
+</body>
+
+
+
+</html>
